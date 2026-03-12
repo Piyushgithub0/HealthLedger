@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
-import { Loader2, Plus, X, Pill, FileText } from "lucide-react";
+import { Loader2, Plus, X, Pill, FileText, Pencil, Trash2, Check } from "lucide-react";
 import DoctorSidebar from "@/react-app/components/DoctorSidebar";
 
 interface PatientDetail {
@@ -13,6 +13,16 @@ interface PatientDetail {
   prescriptions: { _id: string; name: string; dosage: string; duration: string; status: string; prescribedBy: string; prescribedDate: string }[];
 }
 
+interface RxEdit {
+  name: string; dosage: string; duration: string; status: string; prescribedDate: string;
+}
+
+const statusColors: Record<string, string> = {
+  Active: "bg-green-100 text-green-700",
+  Completed: "bg-blue-50 text-blue-600",
+  Expired: "bg-gray-100 text-gray-600",
+};
+
 export default function DoctorPatientDetail() {
   const { id } = useParams();
   const [data, setData] = useState<PatientDetail | null>(null);
@@ -20,6 +30,9 @@ export default function DoctorPatientDetail() {
   const [showRecordForm, setShowRecordForm] = useState(false);
   const [showRxForm, setShowRxForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [editingRxId, setEditingRxId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<RxEdit>({ name: "", dosage: "", duration: "", status: "Active", prescribedDate: "" });
+  const [deletingRxId, setDeletingRxId] = useState<string | null>(null);
   const [recordForm, setRecordForm] = useState({ date: new Date().toISOString().slice(0, 10), diagnosis: "", treatment: "", status: "Ongoing", notes: "" });
   const [rxForm, setRxForm] = useState({ name: "", dosage: "", duration: "", prescribedDate: new Date().toISOString().slice(0, 10) });
   const token = localStorage.getItem("token");
@@ -55,6 +68,36 @@ export default function DoctorPatientDetail() {
       if (res.ok) { setRxForm({ name: "", dosage: "", duration: "", prescribedDate: new Date().toISOString().slice(0, 10) }); setShowRxForm(false); fetchData(); }
     } catch { console.error("Failed"); }
     finally { setSubmitting(false); }
+  };
+
+  const startEditRx = (rx: PatientDetail["prescriptions"][0]) => {
+    setEditingRxId(rx._id);
+    setEditForm({ name: rx.name, dosage: rx.dosage, duration: rx.duration, status: rx.status, prescribedDate: rx.prescribedDate });
+  };
+
+  const saveEditRx = async (rxId: string) => {
+    setSubmitting(true);
+    try {
+      await fetch(`/api/doctor/patients/${id}/prescriptions/${rxId}`, {
+        method: "PUT", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(editForm),
+      });
+      setEditingRxId(null);
+      fetchData();
+    } catch { console.error("Failed"); }
+    finally { setSubmitting(false); }
+  };
+
+  const deleteRx = async (rxId: string) => {
+    if (!confirm("Delete this prescription?")) return;
+    setDeletingRxId(rxId);
+    try {
+      await fetch(`/api/doctor/patients/${id}/prescriptions/${rxId}`, {
+        method: "DELETE", headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchData();
+    } catch { console.error("Failed"); }
+    finally { setDeletingRxId(null); }
   };
 
   if (loading) return <DoctorSidebar><div className="flex items-center justify-center h-96"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div></DoctorSidebar>;
@@ -197,14 +240,83 @@ export default function DoctorPatientDetail() {
           ) : (
             <div className="p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {data.prescriptions.map((rx) => (
-                <div key={rx._id} className="border border-border rounded-xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="w-9 h-9 bg-accent rounded-lg flex items-center justify-center"><Pill className="w-4 h-4 text-primary" /></div>
-                    <span className={`inline-flex px-2.5 py-1 text-xs font-medium rounded-full ${rx.status === "Active" ? "bg-green-100 text-green-700" : rx.status === "Completed" ? "bg-green-50 text-green-600" : "bg-gray-100 text-gray-700"}`}>{rx.status}</span>
-                  </div>
-                  <h3 className="font-semibold text-foreground text-sm">{rx.name}</h3>
-                  <p className="text-xs text-muted-foreground mt-1">{rx.dosage} • {rx.duration}</p>
-                  {rx.prescribedBy && <p className="text-xs text-muted-foreground mt-1">By {rx.prescribedBy}</p>}
+                <div key={rx._id} className="border border-border rounded-xl p-4 hover:shadow-md transition-all">
+                  {editingRxId === rx._id ? (
+                    /* Inline edit form */
+                    <div className="space-y-2">
+                      <input
+                        value={editForm.name}
+                        onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                        placeholder="Medication"
+                        className="w-full px-3 py-1.5 text-sm rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      />
+                      <input
+                        value={editForm.dosage}
+                        onChange={(e) => setEditForm({ ...editForm, dosage: e.target.value })}
+                        placeholder="Dosage"
+                        className="w-full px-3 py-1.5 text-sm rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      />
+                      <input
+                        value={editForm.duration}
+                        onChange={(e) => setEditForm({ ...editForm, duration: e.target.value })}
+                        placeholder="Duration"
+                        className="w-full px-3 py-1.5 text-sm rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      />
+                      <select
+                        value={editForm.status}
+                        onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+                        className="w-full px-3 py-1.5 text-sm rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      >
+                        <option value="Active">Active</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Expired">Expired</option>
+                      </select>
+                      <div className="flex gap-2 pt-1">
+                        <button
+                          onClick={() => saveEditRx(rx._id)}
+                          disabled={submitting}
+                          className="flex-1 flex items-center justify-center gap-1 py-1.5 bg-primary text-white text-xs font-medium rounded-lg hover:bg-primary/90 disabled:opacity-60"
+                        >
+                          {submitting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />} Save
+                        </button>
+                        <button
+                          onClick={() => setEditingRxId(null)}
+                          className="flex-1 flex items-center justify-center gap-1 py-1.5 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-200"
+                        >
+                          <X className="w-3 h-3" /> Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Display mode */
+                    <>
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="w-9 h-9 bg-accent rounded-lg flex items-center justify-center"><Pill className="w-4 h-4 text-primary" /></div>
+                        <div className="flex items-center gap-1.5">
+                          <span className={`inline-flex px-2.5 py-1 text-xs font-medium rounded-full ${statusColors[rx.status] || "bg-gray-100 text-gray-700"}`}>{rx.status}</span>
+                          <button
+                            onClick={() => startEditRx(rx)}
+                            className="p-1.5 rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+                            title="Edit"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => deleteRx(rx._id)}
+                            disabled={deletingRxId === rx._id}
+                            className="p-1.5 rounded-lg text-muted-foreground hover:bg-red-50 hover:text-red-500 transition-colors disabled:opacity-50"
+                            title="Delete"
+                          >
+                            {deletingRxId === rx._id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                          </button>
+                        </div>
+                      </div>
+                      <h3 className="font-semibold text-foreground text-sm">{rx.name}</h3>
+                      <p className="text-xs text-muted-foreground mt-1">{rx.dosage} • {rx.duration}</p>
+                      {rx.prescribedBy && <p className="text-xs text-muted-foreground mt-1">By {rx.prescribedBy}</p>}
+                      {rx.prescribedDate && <p className="text-xs text-muted-foreground">On {rx.prescribedDate}</p>}
+                    </>
+                  )}
                 </div>
               ))}
             </div>

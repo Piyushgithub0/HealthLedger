@@ -176,6 +176,37 @@ router.post("/patients/:id/prescriptions", async (req, res) => {
   }
 });
 
+// PUT /api/doctor/patients/:id/prescriptions/:rxId
+router.put("/patients/:id/prescriptions/:rxId", async (req, res) => {
+  try {
+    const rx = await Prescription.findOne({ _id: req.params.rxId, userId: req.params.id });
+    if (!rx) return res.status(404).json({ message: "Prescription not found" });
+
+    const { name, dosage, duration, status, prescribedDate } = req.body;
+    if (name !== undefined) rx.name = name;
+    if (dosage !== undefined) rx.dosage = dosage;
+    if (duration !== undefined) rx.duration = duration;
+    if (status !== undefined) rx.status = status;
+    if (prescribedDate !== undefined) rx.prescribedDate = prescribedDate;
+
+    await rx.save();
+    res.json(rx);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// DELETE /api/doctor/patients/:id/prescriptions/:rxId
+router.delete("/patients/:id/prescriptions/:rxId", async (req, res) => {
+  try {
+    const rx = await Prescription.findOneAndDelete({ _id: req.params.rxId, userId: req.params.id });
+    if (!rx) return res.status(404).json({ message: "Prescription not found" });
+    res.json({ message: "Deleted" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 // GET /api/doctor/profile
 router.get("/profile", async (req, res) => {
   try {
