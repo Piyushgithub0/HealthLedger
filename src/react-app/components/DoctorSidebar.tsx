@@ -3,6 +3,7 @@ import {
   LayoutDashboard,
   Users,
   User,
+  QrCode,
   LogOut,
   Menu,
   X,
@@ -13,6 +14,7 @@ import { useState } from "react";
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/doctor" },
   { icon: Users, label: "Patients", path: "/doctor/patients" },
+  { icon: QrCode, label: "QR Scanner", path: "/doctor/scan" },
   { icon: User, label: "Profile", path: "/doctor/profile" },
 ];
 
@@ -30,7 +32,7 @@ export default function DoctorSidebar({ children }: DoctorSidebarProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/50 flex">
+    <div className="min-h-screen bg-white flex">
       <aside className="hidden lg:flex flex-col w-64 bg-slate-900 fixed h-full">
         <div className="h-16 flex items-center gap-2 px-6 border-b border-slate-700">
           <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center">
@@ -111,7 +113,7 @@ export default function DoctorSidebar({ children }: DoctorSidebarProps) {
         </div>
       </aside>
 
-      <main className="flex-1 lg:ml-64 pt-16 lg:pt-0">{children}</main>
+      <main className="flex-1 lg:ml-64 pt-16 lg:pt-0 bg-white">{children}</main>
     </div>
   );
 }

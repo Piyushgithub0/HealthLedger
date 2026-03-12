@@ -12,6 +12,8 @@ import doctorRoutes from "./routes/doctor.js";
 import adminRoutes from "./routes/admin.js";
 import heatmapRoutes from "./routes/heatmap.js";
 import chatRoutes from "./routes/chat.js";
+import alertRoutes from "./routes/alerts.js";
+import qrRoutes from "./routes/qr.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, ".env") });
@@ -44,6 +46,8 @@ app.use("/api/doctor", doctorRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/heatmap", heatmapRoutes);   // public — no auth needed
 app.use("/api/chat", chatRoutes);         // public — chatbot
+app.use("/api/alerts", alertRoutes);      // auth-protected alerts
+app.use("/api/qr", qrRoutes);            // QR snapshots (mixed: auth + public)
 
 // Server info (returns the network-accessible base URL)
 app.get("/api/server-info", (req, res) => {

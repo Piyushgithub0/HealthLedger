@@ -2,8 +2,11 @@ import { Link, useLocation } from "react-router";
 import {
   LayoutDashboard,
   Users,
+  Stethoscope,
   Activity,
   FileBarChart,
+  Bell,
+  QrCode,
   Settings,
   LogOut,
   Menu,
@@ -15,8 +18,11 @@ import { useState } from "react";
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
   { icon: Users, label: "Patients", path: "/admin/patients" },
+  { icon: Stethoscope, label: "Doctors", path: "/admin/doctors" },
   { icon: Activity, label: "Disease Monitoring", path: "/admin/monitoring" },
   { icon: FileBarChart, label: "Reports", path: "/admin/reports" },
+  { icon: Bell, label: "Alerts", path: "/admin/alerts" },
+  { icon: QrCode, label: "QR Scanner", path: "/admin/scan" },
   { icon: Settings, label: "Settings", path: "/admin/settings" },
 ];
 
@@ -36,7 +42,7 @@ export default function AdminSidebar({ children }: AdminSidebarProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/50 flex">
+    <div className="min-h-screen bg-white flex">
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex flex-col w-64 bg-slate-900 fixed h-full">
         {/* Logo */}
@@ -143,7 +149,7 @@ export default function AdminSidebar({ children }: AdminSidebarProps) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 lg:ml-64 pt-16 lg:pt-0">
+      <main className="flex-1 lg:ml-64 pt-16 lg:pt-0 bg-white">
         {children}
       </main>
     </div>

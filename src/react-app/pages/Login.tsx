@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { Eye, EyeOff, Mail, Lock, HeartPulse, Loader2 } from "lucide-react";
 import AnimatedBackground from "@/react-app/components/AnimatedBackground";
+import { useToast } from "@/react-app/components/Toast";
 
 export default function Login() {
   const navigate = useNavigate();
+  const toast = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,6 +29,7 @@ export default function Login() {
 
       if (!res.ok) {
         setError(data.message || "Login failed");
+        toast.error("Login Failed", data.message || "Invalid credentials");
         setLoading(false);
         return;
       }
@@ -34,6 +37,7 @@ export default function Login() {
       // Store token and user info
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      toast.success("Welcome back!", `Logged in as ${data.user.fullName}`);
 
       // Navigate based on role
       if (data.user.role === "admin") {
@@ -45,6 +49,7 @@ export default function Login() {
       }
     } catch {
       setError("Unable to connect to server");
+      toast.error("Connection Error", "Unable to connect to the server");
       setLoading(false);
     }
   };

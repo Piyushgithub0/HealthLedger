@@ -96,14 +96,14 @@ router.get("/dashboard", async (req, res) => {
   }
 });
 
-// GET /api/admin/patients — list all patients with search
+// GET /api/admin/patients — list all patients AND doctors with search
 router.get("/patients", async (req, res) => {
   try {
     const { search } = req.query;
-    let query = { role: "patient" };
+    let query = { role: { $in: ["patient", "doctor"] } };
     if (search) {
       query = {
-        role: "patient",
+        role: { $in: ["patient", "doctor"] },
         $or: [
           { fullName: { $regex: search, $options: "i" } },
           { email: { $regex: search, $options: "i" } },
@@ -283,6 +283,86 @@ router.get("/reports", async (req, res) => {
     });
   } catch (error) {
     console.error("Admin reports error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ─── Doctor Management ───────────────────────────────────────────
+
+// GET /api/admin/doctors — list all doctors
+router.get("/doctors", async (req, res) => {
+  try {
+    const { search } = req.query;
+    let query = { role: "doctor" };
+    if (search) {
+      query = {
+        role: "doctor",
+        $or: [
+          { fullName: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } },
+          { specialization: { $regex: search, $options: "i" } },
+          { hospital: { $regex: search, $options: "i" } },
+        ],
+      };
+    }
+    const doctors = await User.find(query).select("-password").sort({ createdAt: -1 });
+    const result = await Promise.all(
+      doctors.map(async (d) => {
+        const casesHandled = await MedicalRecord.countDocuments({ doctor: d.fullName });
+        return {
+          _id: d._id,
+          fullName: d.fullName,
+          email: d.email,
+          phone: d.phone,
+          gender: d.gender,
+          specialization: d.specialization,
+          hospital: d.hospital,
+          experience: d.experience,
+          about: d.about,
+          location: d.location,
+          casesHandled,
+          createdAt: d.createdAt,
+        };
+      })
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// PUT /api/admin/doctors/:id — edit doctor details
+router.put("/doctors/:id", async (req, res) => {
+  try {
+    const { fullName, email, phone, gender, specialization, hospital, experience, about, location } = req.body;
+    const doctor = await User.findOne({ _id: req.params.id, role: "doctor" });
+    if (!doctor) return res.status(404).json({ message: "Doctor not found" });
+
+    if (fullName) doctor.fullName = fullName;
+    if (email) doctor.email = email;
+    if (phone !== undefined) doctor.phone = phone;
+    if (gender !== undefined) doctor.gender = gender;
+    if (specialization !== undefined) doctor.specialization = specialization;
+    if (hospital !== undefined) doctor.hospital = hospital;
+    if (experience !== undefined) doctor.experience = experience;
+    if (about !== undefined) doctor.about = about;
+    if (location !== undefined) doctor.location = location;
+
+    await doctor.save();
+    res.json({ message: "Doctor updated successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// DELETE /api/admin/doctors/:id — remove a doctor
+router.delete("/doctors/:id", async (req, res) => {
+  try {
+    const doctor = await User.findOne({ _id: req.params.id, role: "doctor" });
+    if (!doctor) return res.status(404).json({ message: "Doctor not found" });
+    await User.deleteOne({ _id: req.params.id });
+    res.json({ message: "Doctor removed successfully" });
+  } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 });

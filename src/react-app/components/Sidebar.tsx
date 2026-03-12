@@ -36,7 +36,7 @@ export default function Sidebar({ children }: SidebarProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/50 flex">
+    <div className="min-h-screen bg-white flex">
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-border fixed h-full">
         {/* Logo */}

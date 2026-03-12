@@ -11,6 +11,7 @@ interface Patient {
   gender: string;
   bloodType: string;
   location: string;
+  role: string;
   conditions: string[];
   allergies: string[];
   recordCount: number;
@@ -56,8 +57,8 @@ export default function AdminPatients() {
       <div className="p-6 lg:p-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-foreground">All Patients</h1>
-            <p className="text-muted-foreground mt-1">{patients.length} registered patients</p>
+            <h1 className="text-2xl lg:text-3xl font-bold text-foreground">All Users</h1>
+            <p className="text-muted-foreground mt-1">{patients.length} registered users (patients & doctors)</p>
           </div>
           <form onSubmit={handleSearch} className="flex gap-2">
             <div className="relative">
@@ -102,7 +103,10 @@ export default function AdminPatients() {
                     <tr key={p._id} className="hover:bg-gray-50/50 transition-colors">
                       <td className="px-5 py-4">
                         <div>
-                          <p className="font-semibold text-foreground">{p.fullName}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="font-semibold text-foreground">{p.fullName}</p>
+                            <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full uppercase ${ p.role === "doctor" ? "bg-blue-50 text-blue-600" : "bg-green-50 text-green-600" }`}>{p.role}</span>
+                          </div>
                           <p className="text-xs text-muted-foreground mt-0.5">{p.email}</p>
                           {p.phone && <p className="text-xs text-muted-foreground">{p.phone}</p>}
                         </div>

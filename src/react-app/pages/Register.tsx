@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { Activity, Eye, EyeOff, Mail, Lock, User, ShieldCheck, HeartPulse, Loader2 } from "lucide-react";
 import AnimatedBackground from "@/react-app/components/AnimatedBackground";
+import { useToast } from "@/react-app/components/Toast";
 
 const roles = [
   { id: "patient", label: "Patient", icon: User },
@@ -11,6 +12,7 @@ const roles = [
 
 export default function Register() {
   const navigate = useNavigate();
+  const toast = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
@@ -60,6 +62,7 @@ export default function Register() {
 
       if (!res.ok) {
         setError(data.message || "Registration failed");
+        toast.error("Registration Failed", data.message || "Could not create account");
         setLoading(false);
         return;
       }
@@ -67,6 +70,7 @@ export default function Register() {
       // Store token and user info
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      toast.success("Account Created!", `Welcome to HealthLedger, ${data.user.fullName}`);
 
       // Navigate based on role
       if (data.user.role === "admin") {
