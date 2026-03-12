@@ -1,7 +1,10 @@
 import { Link } from "react-router";
 import { Activity, Shield, FileText, BarChart3, QrCode, Users, HeartPulse } from "lucide-react";
+import { lazy, Suspense } from "react";
 import AnimatedBackground from "@/react-app/components/AnimatedBackground";
 import Header from "@/react-app/components/Header";
+
+const DiseaseHeatmap = lazy(() => import("@/react-app/components/DiseaseHeatmap"));
 
 const features = [
   {
@@ -84,6 +87,15 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      {/* AI Disease Heatmap Section */}
+      <Suspense fallback={
+        <div className="flex items-center justify-center py-20">
+          <div className="w-8 h-8 border-4 border-green-200 border-t-green-600 rounded-full animate-spin" />
+        </div>
+      }>
+        <DiseaseHeatmap />
+      </Suspense>
 
       {/* Features Section */}
       <section className="relative z-10 py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent to-accent/30">

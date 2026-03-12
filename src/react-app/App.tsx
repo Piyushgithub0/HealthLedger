@@ -16,6 +16,7 @@ import DoctorDashboard from "@/react-app/pages/DoctorDashboard";
 import DoctorPatients from "@/react-app/pages/DoctorPatients";
 import DoctorPatientDetail from "@/react-app/pages/DoctorPatientDetail";
 import DoctorProfile from "@/react-app/pages/DoctorProfile";
+import Chatbot from "@/react-app/components/Chatbot";
 
 export default function App() {
   return (
@@ -42,6 +43,7 @@ export default function App() {
         <Route path="/admin/reports" element={<AdminReports />} />
         <Route path="/admin/settings" element={<AdminSettings />} />
       </Routes>
+      <Chatbot />
     </Router>
   );
 }

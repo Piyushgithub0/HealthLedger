@@ -10,6 +10,8 @@ import patientRoutes from "./routes/patient.js";
 import pdfRoutes from "./routes/pdf.js";
 import doctorRoutes from "./routes/doctor.js";
 import adminRoutes from "./routes/admin.js";
+import heatmapRoutes from "./routes/heatmap.js";
+import chatRoutes from "./routes/chat.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, ".env") });
@@ -40,6 +42,8 @@ app.use("/api/patient/pdf", pdfRoutes);   // public — must be before /api/pati
 app.use("/api/patient", patientRoutes);
 app.use("/api/doctor", doctorRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/heatmap", heatmapRoutes);   // public — no auth needed
+app.use("/api/chat", chatRoutes);         // public — chatbot
 
 // Server info (returns the network-accessible base URL)
 app.get("/api/server-info", (req, res) => {

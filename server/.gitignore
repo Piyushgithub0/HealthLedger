@@ -1,0 +1,11 @@
+dist/
+node_modules/
+.wrangler/
+/server/routes/.env
+.dev.vars
+worker-configuration.d.ts
+.env
+.env.local
+.env.development
+.env.production
+.env.test
