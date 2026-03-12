@@ -8,7 +8,7 @@ import {
   LogOut,
   Menu,
   X,
-  Shield,
+  HeartPulse,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -42,7 +42,7 @@ export default function AdminSidebar({ children }: AdminSidebarProps) {
         {/* Logo */}
         <div className="h-16 flex items-center gap-2 px-6 border-b border-slate-700">
           <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center">
-            <Shield className="w-5 h-5 text-white" />
+            <HeartPulse className="w-5 h-5 text-white" />
           </div>
           <div>
             <span className="font-bold text-lg text-white">HealthLedger</span>
@@ -84,7 +84,7 @@ export default function AdminSidebar({ children }: AdminSidebarProps) {
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-slate-900 z-50 flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center">
-            <Shield className="w-5 h-5 text-white" />
+            <HeartPulse className="w-5 h-5 text-white" />
           </div>
           <div>
             <span className="font-bold text-lg text-white">HealthLedger</span>

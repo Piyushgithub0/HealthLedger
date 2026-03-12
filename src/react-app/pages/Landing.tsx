@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { Activity, Shield, FileText, BarChart3, QrCode, Users } from "lucide-react";
+import { Activity, Shield, FileText, BarChart3, QrCode, Users, HeartPulse } from "lucide-react";
 import AnimatedBackground from "@/react-app/components/AnimatedBackground";
 import Header from "@/react-app/components/Header";
 
@@ -46,7 +46,7 @@ export default function Landing() {
       <section className="relative z-10 pt-16 pb-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent rounded-full mb-8">
-            <Activity className="w-4 h-4 text-primary" />
+            <HeartPulse className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-accent-foreground">
               Next-Generation Healthcare Platform
             </span>
@@ -149,7 +149,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Activity className="w-5 h-5 text-white" />
+              <HeartPulse className="w-5 h-5 text-white" />
             </div>
             <span className="font-semibold text-foreground">HealthLedger</span>
           </div>

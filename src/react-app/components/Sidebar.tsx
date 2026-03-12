@@ -6,7 +6,7 @@ import {
   Pill,
   User,
   LogOut,
-  Activity,
+  HeartPulse,
   Menu,
   X,
 } from "lucide-react";
@@ -42,7 +42,7 @@ export default function Sidebar({ children }: SidebarProps) {
         {/* Logo */}
         <div className="h-16 flex items-center gap-2 px-6 border-b border-border">
           <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center">
-            <Activity className="w-5 h-5 text-white" />
+            <HeartPulse className="w-5 h-5 text-white" />
           </div>
           <span className="font-bold text-lg text-foreground">HealthLedger</span>
         </div>
@@ -81,7 +81,7 @@ export default function Sidebar({ children }: SidebarProps) {
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-border z-50 flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center">
-            <Activity className="w-5 h-5 text-white" />
+            <HeartPulse className="w-5 h-5 text-white" />
           </div>
           <span className="font-bold text-lg text-foreground">HealthLedger</span>
         </div>

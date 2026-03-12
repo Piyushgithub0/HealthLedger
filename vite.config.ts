@@ -7,8 +7,14 @@ export default defineConfig({
     react(),
   ],
   server: {
-	    allowedHosts: true,
-	  },
+    allowedHosts: true,
+    proxy: {
+      "/api": {
+        target: "http://localhost:5000",
+        changeOrigin: true,
+      },
+    },
+  },
   build: {
     chunkSizeWarningLimit: 5000,
   },

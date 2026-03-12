@@ -4,6 +4,10 @@ import Login from "@/react-app/pages/Login";
 import Register from "@/react-app/pages/Register";
 import PatientDashboard from "@/react-app/pages/PatientDashboard";
 import AdminDashboard from "@/react-app/pages/AdminDashboard";
+import HealthCard from "@/react-app/pages/HealthCard";
+import MedicalHistory from "@/react-app/pages/MedicalHistory";
+import Prescriptions from "@/react-app/pages/Prescriptions";
+import Profile from "@/react-app/pages/Profile";
 
 export default function App() {
   return (
@@ -13,6 +17,10 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<PatientDashboard />} />
+        <Route path="/dashboard/health-card" element={<HealthCard />} />
+        <Route path="/dashboard/history" element={<MedicalHistory />} />
+        <Route path="/dashboard/prescriptions" element={<Prescriptions />} />
+        <Route path="/dashboard/profile" element={<Profile />} />
         <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </Router>

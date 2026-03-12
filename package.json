@@ -3,9 +3,21 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "clsx": "^2.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.510.0",
+    "mongoose": "^8.9.5",
+    "pdfkit": "^0.15.2",
+    "qrcode": "^1.5.4",
+    "qrcode.react": "^4.2.0",
     "radix-ui": "^1.4.3",
     "react": "19.0.0",
     "react-dom": "19.0.0",
@@ -34,8 +46,9 @@
     "vite": "^7.3.1"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "serve": "vite preview"
+    "dev": "bunx --bun vite",
+    "build": "bunx --bun vite build",
+    "serve": "bunx --bun vite preview",
+    "server": "node server/index.js"
   }
 }

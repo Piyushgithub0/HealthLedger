@@ -1,16 +1,50 @@
 import { useState } from "react";
-import { Link } from "react-router";
-import { Activity, Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { Link, useNavigate } from "react-router";
+import { Eye, EyeOff, Mail, Lock, HeartPulse, Loader2 } from "lucide-react";
 import AnimatedBackground from "@/react-app/components/AnimatedBackground";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Placeholder - no backend logic
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "Login failed");
+        setLoading(false);
+        return;
+      }
+
+      // Store token and user info
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // Navigate based on role
+      if (data.user.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
+    } catch {
+      setError("Unable to connect to server");
+      setLoading(false);
+    }
   };
 
   return (
@@ -22,7 +56,7 @@ export default function Login() {
         <div className="flex flex-col items-center mb-8">
           <Link to="/" className="flex items-center gap-2 group mb-2">
             <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
-              <Activity className="w-7 h-7 text-white" />
+              <HeartPulse className="w-7 h-7 text-white" />
             </div>
           </Link>
           <h1 className="text-2xl font-bold text-foreground">HealthLedger</h1>
@@ -32,6 +66,13 @@ export default function Login() {
         {/* Login Card */}
         <div className="bg-white rounded-2xl shadow-xl shadow-black/5 border border-border p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Error Message */}
+            {error && (
+              <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm text-center">
+                {error}
+              </div>
+            )}
+
             {/* Email Field */}
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium text-foreground">
@@ -45,6 +86,7 @@ export default function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
+                  required
                   className="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-white text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
                 />
               </div>
@@ -63,6 +105,7 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
+                  required
                   className="w-full pl-11 pr-12 py-3 rounded-xl border border-border bg-white text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
                 />
                 <button
@@ -88,9 +131,11 @@ export default function Login() {
             {/* Login Button */}
             <button
               type="submit"
-              className="w-full py-3.5 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-all hover:shadow-lg hover:shadow-primary/25 active:scale-[0.98]"
+              disabled={loading}
+              className="w-full py-3.5 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-all hover:shadow-lg hover:shadow-primary/25 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              Login
+              {loading && <Loader2 className="w-5 h-5 animate-spin" />}
+              {loading ? "Signing in..." : "Login"}
             </button>
           </form>
 
