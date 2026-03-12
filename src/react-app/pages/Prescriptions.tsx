@@ -62,7 +62,7 @@ export default function Prescriptions() {
 
   const statusColor = (status: string) => {
     if (status === "Active") return "bg-green-100 text-green-700";
-    if (status === "Completed") return "bg-blue-100 text-blue-700";
+    if (status === "Completed") return "bg-green-50 text-green-600";
     return "bg-gray-100 text-gray-700";
   };
 

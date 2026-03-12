@@ -28,12 +28,19 @@ const userSchema = new mongoose.Schema(
     // Profile fields
     phone: { type: String, default: "" },
     dateOfBirth: { type: String, default: "" },
+    age: { type: Number, default: 0 },
     gender: { type: String, enum: ["male", "female", "other", ""], default: "" },
     bloodType: { type: String, default: "" },
     address: { type: String, default: "" },
+    location: { type: String, default: "" },
     emergencyContact: { type: String, default: "" },
     allergies: [{ type: String }],
     conditions: [{ type: String }],
+    // Doctor-specific fields
+    specialization: { type: String, default: "" },
+    hospital: { type: String, default: "" },
+    experience: { type: String, default: "" },
+    about: { type: String, default: "" },
   },
   { timestamps: true }
 );

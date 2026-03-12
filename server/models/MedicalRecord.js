@@ -19,10 +19,18 @@ const medicalRecordSchema = new mongoose.Schema(
       type: String,
       required: [true, "Doctor name is required"],
     },
+    treatment: {
+      type: String,
+      default: "",
+    },
     status: {
       type: String,
       enum: ["Ongoing", "Recovered", "Completed", "Normal"],
       default: "Ongoing",
+    },
+    location: {
+      type: String,
+      default: "",
     },
     notes: {
       type: String,

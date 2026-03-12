@@ -8,6 +8,7 @@ import {
   QrCode,
   Loader2,
 } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import Sidebar from "@/react-app/components/Sidebar";
 
 interface DashboardData {
@@ -41,16 +42,23 @@ interface DashboardData {
 export default function PatientDashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [pdfUrl, setPdfUrl] = useState("");
 
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
         const token = localStorage.getItem("token");
+        const userId = JSON.parse(localStorage.getItem("user") || "{}").id;
         const res = await fetch("/api/patient/dashboard", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const json = await res.json();
         setData(json);
+
+        // Fetch network URL for QR
+        const infoRes = await fetch("/api/server-info");
+        const infoData = await infoRes.json();
+        setPdfUrl(`${infoData.baseUrl}/api/patient/pdf/${userId}`);
       } catch {
         console.error("Failed to fetch dashboard");
       } finally {
@@ -195,16 +203,23 @@ export default function PatientDashboard() {
 
               <div className="bg-white border-2 border-dashed border-border rounded-xl p-6 flex items-center justify-center mb-4">
                 <div className="text-center">
-                  <div className="w-24 h-24 mx-auto bg-gray-100 rounded-lg flex items-center justify-center mb-2">
-                    <QrCode className="w-16 h-16 text-gray-400" />
+                  <div className="w-24 h-24 mx-auto bg-white rounded-lg flex items-center justify-center mb-2">
+                    {pdfUrl ? (
+                      <QRCodeSVG value={pdfUrl} size={88} level="H" />
+                    ) : (
+                      <QrCode className="w-16 h-16 text-gray-400" />
+                    )}
                   </div>
-                  <p className="text-xs text-muted-foreground">Scan for health records</p>
+                  <p className="text-xs text-muted-foreground">Scan to download health report</p>
                 </div>
               </div>
 
-              <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary/90 transition-all hover:shadow-lg hover:shadow-primary/25">
+              <button
+                onClick={() => { if (pdfUrl) window.open(pdfUrl, "_blank"); }}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary/90 transition-all hover:shadow-lg hover:shadow-primary/25"
+              >
                 <Download className="w-4 h-4" />
-                Download QR Card
+                Download Health PDF
               </button>
             </div>
           </div>

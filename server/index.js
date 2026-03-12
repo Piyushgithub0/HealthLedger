@@ -8,6 +8,8 @@ import { fileURLToPath } from "url";
 import authRoutes from "./routes/auth.js";
 import patientRoutes from "./routes/patient.js";
 import pdfRoutes from "./routes/pdf.js";
+import doctorRoutes from "./routes/doctor.js";
+import adminRoutes from "./routes/admin.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, ".env") });
@@ -34,8 +36,10 @@ app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/patient/pdf", pdfRoutes);   // public — must be before /api/patient (auth-protected)
 app.use("/api/patient", patientRoutes);
-app.use("/api/patient/pdf", pdfRoutes);
+app.use("/api/doctor", doctorRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Server info (returns the network-accessible base URL)
 app.get("/api/server-info", (req, res) => {
